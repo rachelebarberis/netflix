@@ -21,6 +21,8 @@ const NetflixFilm = ({ searchKey }) => {
           const data = await response.json();
           if (data.Search) {
             setSearchResults(data.Search.slice(0, 6));
+            setIsError(false);
+            setIsLoading(false);
           } else {
             console.log("Nessun risultato trovato.");
           }
@@ -30,6 +32,7 @@ const NetflixFilm = ({ searchKey }) => {
       } catch (error) {
         console.error("Errore:", error);
         setIsError(true);
+        setIsLoading(true);
       }
     };
 

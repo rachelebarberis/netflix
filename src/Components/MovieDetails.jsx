@@ -1,23 +1,32 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Spinner, Alert, Row, Col } from "react-bootstrap";
+import {
+  Container,
+  Spinner,
+  Alert,
+  Row,
+  Col,
+  ListGroup,
+} from "react-bootstrap";
 
-const URL = "https://www.omdbapi.com/";
-const Token = "90251c4f";
+const API_URL = "https://www.omdbapi.com/";
+const API_TOKEN = "90251c4f";
+const COMMENTS_API_URL = "https://striveschool-api.herokuapp.com/api/comments/";
 
 const MovieDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
+  const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const getMovieData = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading(false);
         setIsError(false);
 
-        const response = await fetch(`${URL}?apikey=${Token}&i=${id}`);
+        const response = await fetch(`${API_URL}?apikey=${API_TOKEN}&i=${id}`);
         if (response.ok) {
           const data = await response.json();
           if (data.Response === "True") {
@@ -32,12 +41,35 @@ const MovieDetails = () => {
       } catch (error) {
         console.error("Errore:", error);
         setIsError(true);
-      } finally {
-        setIsLoading(false);
+      }
+    };
+
+    const getComments = async () => {
+      try {
+        const response = await fetch(`${COMMENTS_API_URL}?movieId=${id}`, {
+          method: "GET",
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVhOWVmNTk3ZTI5ZjAwMTVjMmU2OWMiLCJpYXQiOjE3MzY3NzQ4NzksImV4cCI6MTczNzk4NDQ3OX0.4kD4PjijrCGJggPxjkThpqhDO33NvMQ7Zo4uzeA9M7s",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const filteredComments = data.filter(
+            (comment) => comment.elementId === id
+          );
+          setComments(filteredComments);
+          setComments(data);
+        } else {
+          console.error("Errore nel recupero dei commenti.");
+        }
+      } catch (error) {
+        console.error("Errore:", error);
       }
     };
 
     getMovieData();
+    getComments();
   }, [id]);
 
   if (isLoading) {
@@ -89,6 +121,24 @@ const MovieDetails = () => {
           <p>
             <strong>Attori:</strong> {movie.Actors}
           </p>
+
+          <div className="mt-4 bg-dark">
+            <h3>Commenti</h3>
+            {comments.length > 0 ? (
+              <ListGroup>
+                {comments.map((comment, elementId) => (
+                  <ListGroup.Item
+                    key={elementId}
+                    className="bg-dark text-white"
+                  >
+                    <strong>{comment.author}</strong>: {comment.comment}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            ) : (
+              <p>Non ci sono commenti per questo film.</p>
+            )}
+          </div>
         </Col>
       </Row>
     </Container>
