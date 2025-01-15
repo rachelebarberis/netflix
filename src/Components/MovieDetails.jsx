@@ -59,7 +59,6 @@ const MovieDetails = () => {
             (comment) => comment.elementId === id
           );
           setComments(filteredComments);
-          setComments(data);
         } else {
           console.error("Errore nel recupero dei commenti.");
         }
@@ -126,11 +125,8 @@ const MovieDetails = () => {
             <h3>Commenti</h3>
             {comments.length > 0 ? (
               <ListGroup>
-                {comments.map((comment, elementId) => (
-                  <ListGroup.Item
-                    key={elementId}
-                    className="bg-dark text-white"
-                  >
+                {comments.map((comment, id) => (
+                  <ListGroup.Item key={id} className="bg-dark text-white">
                     <strong>{comment.author}</strong>: {comment.comment}
                   </ListGroup.Item>
                 ))}
