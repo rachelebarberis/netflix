@@ -1,5 +1,6 @@
 import { Container, Navbar, Nav } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
+
 const NetflixNav = function () {
   const location = useLocation();
   console.log("LOCATION OBJECT", location);
