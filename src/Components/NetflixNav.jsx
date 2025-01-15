@@ -1,5 +1,9 @@
 import { Container, Navbar, Nav } from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
 const NetflixNav = function () {
+  const location = useLocation();
+  console.log("LOCATION OBJECT", location);
+
   return (
     <Navbar
       bg="dark"
@@ -23,9 +27,16 @@ const NetflixNav = function () {
             <Nav.Link href="#" className="fw-bold">
               Home
             </Nav.Link>
-            <Nav.Link href="#" className="fw-bold">
-              TV Shows
-            </Nav.Link>
+            <Link
+              to="/tvshow"
+              className={
+                location.pathname === "/tvshow"
+                  ? "nav-link active fw-bold"
+                  : "nav-link fw-bold"
+              }
+            >
+              Tv Show
+            </Link>
             <Nav.Link href="#" className="fw-bold">
               Movies
             </Nav.Link>
